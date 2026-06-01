@@ -3,861 +3,470 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>问道·红尘劫 | 修仙闯关游戏</title>
+    <title>问道·红尘劫 | 修仙闯关</title>
     <style>
-        * {
-            user-select: none;
-            box-sizing: border-box;
-        }
-
+        * { user-select: none; box-sizing: border-box; }
         body {
             background: linear-gradient(135deg, #1a2a1f 0%, #0e1a0c 100%);
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-family: 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', monospace;
+            font-family: 'Segoe UI', 'Microsoft YaHei', monospace;
             padding: 20px;
             margin: 0;
-            position: relative;
         }
-
-        /* 雷电特效层 */
-        .lightning {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            background: rgba(255,255,255,0);
-            z-index: 999;
-            transition: background 0.05s;
-        }
-        .lightning.flash {
-            background: rgba(255,255,200,0.7);
-        }
-
         .game-container {
-            max-width: 600px;
+            max-width: 550px;
             width: 100%;
             background: #fef3df;
-            background-image: radial-gradient(circle at 20% 30%, rgba(160, 120, 70, 0.08) 2%, transparent 2.5%);
-            background-size: 26px 26px;
-            border-radius: 48px 40px 56px 44px;
-            box-shadow: 0 25px 40px rgba(0, 0, 0, 0.5), inset 0 1px 3px #fff8e7;
-            padding: 20px 22px 28px;
-            border: 1px solid #dbbc7c;
-            position: relative;
-            z-index: 1;
-            transition: transform 0.1s ease;
-        }
-        .game-container.shake {
-            animation: shake 0.3s ease-in-out 0s 2;
-        }
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-5px); }
-            75% { transform: translateX(5px); }
-        }
-
-        .title {
-            text-align: center;
-            border-bottom: 2px solid #c9a458;
-            padding-bottom: 8px;
-            margin-bottom: 18px;
-        }
-
-        .title h1 {
-            font-size: 1.9rem;
-            margin: 0;
-            background: linear-gradient(135deg, #3c7846, #c9863a);
-            background-clip: text;
-            -webkit-background-clip: text;
-            color: transparent;
-            letter-spacing: 4px;
-        }
-
-        .title p {
-            color: #7b5a36;
-            font-size: 0.65rem;
-            margin-top: 4px;
-        }
-
-        .sound-btn {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: #5f4230;
-            border: none;
-            padding: 6px 12px;
-            border-radius: 30px;
-            color: #ffdfaa;
-            font-size: 0.7rem;
-            cursor: pointer;
-            z-index: 10;
-        }
-        .sound-btn.active {
-            background: #7c9a4a;
-            color: white;
-        }
-
-        .stats-bar {
-            display: flex;
-            justify-content: space-between;
-            gap: 10px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
-
-        .stat-card {
-            background: #2c261c;
-            border-radius: 40px;
-            padding: 8px 16px;
-            flex: 1;
-            text-align: center;
-            box-shadow: inset 0 1px 2px #5f4a2e, 0 3px 6px rgba(0,0,0,0.3);
-            transition: transform 0.05s ease;
-        }
-        .stat-card.pulse {
-            transform: scale(1.05);
-            background: #4a3a28;
-        }
-
-        .stat-label {
-            font-size: 0.65rem;
-            color: #dbbc7c;
-            letter-spacing: 1px;
-        }
-
-        .stat-value {
-            font-size: 1.3rem;
-            font-weight: bold;
-            color: #f7e5b5;
-            line-height: 1.2;
-            transition: all 0.1s ease;
-        }
-        .stat-value.plus {
-            color: #aaffaa;
-            text-shadow: 0 0 5px #00aa00;
-            transform: scale(1.1);
-        }
-        .stat-value.minus {
-            color: #ffaa88;
-            text-shadow: 0 0 5px #ff4400;
-        }
-
-        .danger-timer .stat-value {
-            color: #ff8866;
-        }
-
-        .realm-container {
-            margin-bottom: 20px;
-        }
-        .realm-label {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.7rem;
-            color: #6b4e2a;
-            margin-bottom: 4px;
-            font-weight: bold;
-        }
-        .bar-bg {
-            background: #2c241a;
-            border-radius: 30px;
-            height: 20px;
-            overflow: hidden;
-        }
-        .realm-bar-fill {
-            width: 0%;
-            height: 100%;
-            background: linear-gradient(90deg, #5fa83d, #e7b42c);
-            border-radius: 30px;
-            transition: width 0.3s ease;
-        }
-
-        .current-realm {
-            text-align: center;
-            font-size: 0.8rem;
-            margin-top: 5px;
-            color: #bc8f4b;
-            font-weight: bold;
-        }
-
-        .fire-container {
-            margin-bottom: 20px;
-        }
-        .fire-header {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.7rem;
-            font-weight: bold;
-            color: #9b5a2a;
-        }
-        .fire-bar-bg {
-            background: #2a1f14;
-            border-radius: 30px;
-            height: 14px;
-        }
-        .fire-bar-fill {
-            width: 50%;
-            height: 100%;
-            background: linear-gradient(90deg, #ff8c42, #ff5e00);
-            border-radius: 30px;
-            transition: width 0.2s;
-        }
-
-        .companion-section {
-            background: #e6dbbc;
-            border-radius: 28px;
-            padding: 8px 12px;
-            margin-bottom: 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 0.7rem;
-            font-weight: bold;
-        }
-
-        .materials {
-            background: #e6dbbc;
-            border-radius: 28px;
-            padding: 12px;
-            margin-bottom: 20px;
-            display: flex;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 8px;
-        }
-        .material {
-            background: #fef0cf;
-            border-radius: 30px;
-            padding: 4px 12px;
-            font-size: 0.75rem;
-            font-weight: bold;
-            color: #5e3a1f;
-            flex: 1;
-            text-align: center;
-            transition: all 0.05s ease;
-        }
-        .material.gain {
-            background: #c8e6a0;
-            transform: scale(1.02);
-        }
-
-        .action-buttons {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            margin-bottom: 20px;
-        }
-        .btn-group {
-            display: flex;
-            gap: 12px;
-        }
-        .btn {
-            flex: 1;
-            background: #f3e5c0;
-            border: none;
-            padding: 12px 8px;
-            border-radius: 60px;
-            font-weight: bold;
-            font-family: inherit;
-            font-size: 0.9rem;
-            color: #4a3020;
-            cursor: pointer;
-            transition: all 0.05s linear;
-            box-shadow: 0 3px 0 #b48b4b;
-            text-align: center;
-        }
-        .btn:active {
-            transform: translateY(2px);
-            box-shadow: 0 1px 0 #b48b4b;
-        }
-        .btn-primary {
-            background: #c9a25d;
-            color: #2b2118;
-        }
-        .btn-danger {
-            background: #c9784a;
-            color: white;
-        }
-        .btn-warning {
-            background: #7c9a4a;
-            color: white;
-        }
-        .disabled-btn {
-            opacity: 0.5;
-            pointer-events: none;
-        }
-        .btn-pulse {
-            animation: btnPulse 0.15s ease-out;
-        }
-        @keyframes btnPulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(0.95); background: #e8d5a0; }
-            100% { transform: scale(1); }
-        }
-
-        .log-area {
-            background: #1e1912;
-            border-radius: 24px;
-            padding: 10px;
-            height: 130px;
-            overflow-y: auto;
-            font-size: 0.68rem;
-            font-family: monospace;
-            color: #e7cf97;
-            margin-top: 12px;
-        }
-        .log-entry {
-            animation: fadeInUp 0.2s ease-out;
-        }
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(5px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .reset-btn {
-            margin-top: 16px;
-            width: 100%;
-            background: #5f4230;
-            border: none;
-            padding: 10px;
-            border-radius: 60px;
-            color: #ffdfaa;
-            font-weight: bold;
-            cursor: pointer;
-            font-family: inherit;
-        }
-
-        .modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.85);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            backdrop-filter: blur(4px);
-            animation: fadeIn 0.3s;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        .modal-content {
-            background: linear-gradient(145deg, #fef0da, #f5e5c8);
-            max-width: 400px;
-            width: 90%;
             border-radius: 48px;
-            padding: 28px 22px;
-            text-align: center;
-            box-shadow: 0 20px 40px black;
-            border: 2px solid #e9c27c;
-            animation: modalPop 0.2s ease-out;
+            padding: 20px;
+            border: 1px solid #dbbc7c;
+            transition: transform 0.1s;
         }
-        @keyframes modalPop {
-            from { transform: scale(0.9); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
+        .game-container.shake { animation: shake 0.3s ease-in-out 0s 2; }
+        @keyframes shake { 0%,100%{transform:translateX(0);} 25%{transform:translateX(-5px);} 75%{transform:translateX(5px);} }
+        
+        .lightning {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; background: rgba(255,255,255,0); z-index: 999;
+            transition: background 0.05s;
         }
-        .modal-content h2 {
-            color: #8b5a2b;
-            margin-bottom: 20px;
-            font-size: 1.8rem;
+        .lightning.flash { background: rgba(255,255,200,0.7); }
+        
+        .title { text-align: center; border-bottom: 2px solid #c9a458; padding-bottom: 8px; margin-bottom: 18px; }
+        .title h1 { font-size: 1.8rem; margin: 0; color: #c9863a; }
+        .sound-btn {
+            background: #5f4230; border: none; padding: 4px 12px; border-radius: 30px;
+            color: #ffdfaa; font-size: 0.65rem; cursor: pointer; margin-bottom: 10px;
         }
-        .modal-stats {
-            text-align: left;
-            background: #2c261c;
-            border-radius: 28px;
-            padding: 15px;
-            color: #f7e5b5;
-            margin: 15px 0;
+        .sound-btn.active { background: #7c9a4a; color: white; }
+        .stats-bar { display: flex; justify-content: space-between; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+        .stat-card { background: #2c261c; border-radius: 40px; padding: 6px 12px; flex: 1; text-align: center; }
+        .stat-label { font-size: 0.6rem; color: #dbbc7c; }
+        .stat-value { font-size: 1.3rem; font-weight: bold; color: #f7e5b5; }
+        .stat-card.pulse { transform: scale(1.05); background: #4a3a28; }
+        .realm-container, .fire-container { margin-bottom: 18px; }
+        .bar-bg { background: #2c241a; border-radius: 30px; height: 18px; overflow: hidden; }
+        .realm-bar-fill { width: 0%; height: 100%; background: linear-gradient(90deg, #5fa83d, #e7b42c); border-radius: 30px; transition: width 0.2s; }
+        .fire-bar-fill { width: 50%; height: 100%; background: linear-gradient(90deg, #ff8c42, #ff5e00); border-radius: 30px; transition: width 0.2s; }
+        .current-realm { text-align: center; font-size: 0.75rem; margin-top: 5px; color: #bc8f4b; }
+        .companion-section { background: #e6dbbc; border-radius: 28px; padding: 8px 12px; margin-bottom: 15px; display: flex; justify-content: space-between; font-size: 0.7rem; font-weight: bold; }
+        .materials { background: #e6dbbc; border-radius: 28px; padding: 10px; margin-bottom: 20px; display: flex; justify-content: space-between; gap: 8px; }
+        .material { background: #fef0cf; border-radius: 30px; padding: 4px 10px; font-size: 0.7rem; font-weight: bold; flex: 1; text-align: center; }
+        .action-buttons { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+        .btn-group { display: flex; gap: 10px; }
+        .btn {
+            flex: 1; background: #f3e5c0; border: none; padding: 10px 6px; border-radius: 60px;
+            font-weight: bold; font-family: inherit; font-size: 0.85rem; cursor: pointer;
+            box-shadow: 0 3px 0 #b48b4b; transition: 0.05s;
         }
-        .modal-btn {
-            background: #c9a25d;
-            border: none;
-            padding: 12px 28px;
-            border-radius: 40px;
-            font-size: 1rem;
-            font-weight: bold;
-            cursor: pointer;
-            margin-top: 15px;
+        .btn:active { transform: translateY(2px); box-shadow: 0 1px 0 #b48b4b; }
+        .btn-pulse { animation: btnPulse 0.15s ease-out; }
+        @keyframes btnPulse { 0%{transform:scale(1);} 50%{transform:scale(0.95);} 100%{transform:scale(1);} }
+        .btn-primary { background: #c9a25d; }
+        .btn-danger { background: #c9784a; color: white; }
+        .btn-warning { background: #7c9a4a; color: white; }
+        .disabled-btn { opacity: 0.5; pointer-events: none; }
+        .log-area { background: #1e1912; border-radius: 24px; padding: 10px; height: 110px; overflow-y: auto; font-size: 0.65rem; color: #e7cf97; margin-top: 12px; }
+        .reset-btn { margin-top: 16px; width: 100%; background: #5f4230; border: none; padding: 10px; border-radius: 60px; color: #ffdfaa; font-weight: bold; cursor: pointer; }
+        
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.88); backdrop-filter: blur(5px);
+            display: flex; justify-content: center; align-items: center; z-index: 2000;
         }
-        .hidden {
-            display: none;
+        .choice-modal, .result-modal {
+            background: #fef0da; max-width: 420px; width: 85%;
+            border-radius: 48px; padding: 20px; text-align: center; border: 2px solid #ecc284;
         }
-
-        /* 飘字效果 */
+        .choice-modal h3 { color: #8b4b1a; font-size: 1.5rem; margin-bottom: 15px; }
+        .choice-desc { background: #2c261c; color: #ffefbf; padding: 15px; border-radius: 36px; margin: 15px 0; font-size: 0.9rem; }
+        .choice-buttons { display: flex; gap: 15px; justify-content: center; margin-top: 15px; flex-wrap: wrap; }
+        .choice-btn { background: #ba8750; padding: 8px 20px; border-radius: 40px; font-weight: bold; color: white; cursor: pointer; border: none; font-size: 0.9rem; }
+        .modal-stats { text-align: left; background: #2c261c; border-radius: 28px; padding: 12px; color: #f7e5b5; margin: 15px 0; font-size: 0.8rem; }
+        .hidden { display: none; }
+        
         .float-number {
-            position: fixed;
-            font-size: 1.2rem;
-            font-weight: bold;
-            pointer-events: none;
-            z-index: 10000;
-            animation: floatUp 0.8s ease-out forwards;
-            text-shadow: 0 0 3px black;
+            position: fixed; font-size: 1.2rem; font-weight: bold; pointer-events: none;
+            z-index: 10000; animation: floatUp 0.8s ease-out forwards; text-shadow: 0 0 3px black;
         }
-        @keyframes floatUp {
-            0% { opacity: 1; transform: translateY(0) scale(1); }
-            100% { opacity: 0; transform: translateY(-50px) scale(1.2); }
+        @keyframes floatUp { 0%{opacity:1;transform:translateY(0);} 100%{opacity:0;transform:translateY(-50px);} }
+        .result-pop {
+            position: fixed; bottom: 30%; left: 50%; transform: translateX(-50%);
+            background: #2c261c; padding: 8px 20px; border-radius: 40px;
+            color: #ffdfaa; font-weight: bold; z-index: 1000;
+            animation: fadeOut 1.5s ease-out forwards;
         }
-
-        footer {
-            font-size: 0.5rem;
-            text-align: center;
-            margin-top: 12px;
-            color: #ad8a55;
-        }
+        @keyframes fadeOut { 0%{opacity:1;} 70%{opacity:1;} 100%{opacity:0;} }
     </style>
 </head>
 <body>
 <div class="lightning" id="lightning"></div>
 <div class="game-container" id="gameContainer">
     <button class="sound-btn" id="soundBtn">🔇 开启声音</button>
-    <div class="title">
-        <h1>问 道 · 红 尘 劫</h1>
-        <p>｜ 九死一生 逆天改命 ｜</p>
-    </div>
+    <div class="title"><h1>问道·红尘劫</h1><p>｜ 修仙问道 逆天改命 ｜</p></div>
 
     <div class="stats-bar">
-        <div class="stat-card" id="cultStat"><div class="stat-label">🧘 修为</div><div class="stat-value" id="cultivationVal">0</div></div>
+        <div class="stat-card" id="cultStat"><div class="stat-label">🧘 修为</div><div class="stat-value" id="cultVal">0</div></div>
         <div class="stat-card" id="fireStat"><div class="stat-label">🔥 炉火</div><div class="stat-value" id="fireVal">50</div></div>
-        <div class="stat-card danger-timer" id="turnStat"><div class="stat-label">⏰ 剩余回合</div><div class="stat-value" id="turnLeft">10</div></div>
-        <div class="stat-card"><div class="stat-label">⚡ 境界</div><div class="stat-value" id="realmIndex">1/9</div></div>
+        <div class="stat-card" id="turnStat"><div class="stat-label">⏰ 回合</div><div class="stat-value" id="turnVal">14</div></div>
+        <div class="stat-card"><div class="stat-label">⚡ 境界</div><div class="stat-value" id="realmVal">1/9</div></div>
     </div>
 
     <div class="realm-container">
-        <div class="realm-label"><span>境界进度</span><span id="realmProgressText">0 / 100</span></div>
+        <div style="display:flex; justify-content:space-between;"><span>境界进度</span><span id="progressText">0/100</span></div>
         <div class="bar-bg"><div class="realm-bar-fill" id="realmBar"></div></div>
-        <div class="current-realm" id="currentRealm">⚡ 炼气期 ⚡</div>
+        <div class="current-realm" id="realmName">⚡ 炼气期 ⚡</div>
     </div>
 
     <div class="fire-container">
-        <div class="fire-header"><span>🔥 炉火温度</span><span id="fireStatus">温热适中</span></div>
-        <div class="bar-bg"><div class="fire-bar-fill" id="fireFill"></div></div>
+        <div style="display:flex; justify-content:space-between;"><span>🔥 炉火温度</span><span id="fireStatus">温热适中</span></div>
+        <div class="bar-bg"><div class="fire-bar-fill" id="fireBar"></div></div>
     </div>
 
     <div class="companion-section">
-        <span>💑 道侣：</span>
-        <span id="companionStatus">❤️ 暂无</span>
-        <span>✨ 仙缘：</span>
-        <span id="immortalStatus">🌙 未遇</span>
+        <span>💑 道侣：<span id="companionText">暂无</span></span>
+        <span>✨ 仙缘：<span id="immortalText">未遇</span></span>
     </div>
 
     <div class="materials">
-        <div class="material" id="herbMat">🌿 灵草: <span id="herbCount">5</span></div>
-        <div class="material" id="oreMat">💎 矿石: <span id="oreCount">5</span></div>
-        <div class="material" id="bloodMat">🔥 兽血: <span id="bloodCount">3</span></div>
+        <div class="material">🌿 灵草: <span id="herbCount">6</span></div>
+        <div class="material">💎 矿石: <span id="oreCount">5</span></div>
+        <div class="material">🔥 兽血: <span id="bloodCount">3</span></div>
     </div>
 
     <div class="action-buttons">
-        <div class="btn-group">
-            <button class="btn" id="exploreBtn">🌲 神识探索</button>
-            <button class="btn btn-primary" id="alchemyBtn">⚗️ 炼丹</button>
-        </div>
-        <div class="btn-group">
-            <button class="btn btn-warning" id="adjustFireUp">🔥 + 升温</button>
-            <button class="btn btn-warning" id="adjustFireDown">❄️ - 降温</button>
-            <button class="btn btn-danger" id="breakthroughBtn">✨ 渡劫突破</button>
-        </div>
+        <div class="btn-group"><button class="btn" id="exploreBtn">🌲 探索</button><button class="btn btn-primary" id="alchemyBtn">⚗️ 炼丹</button></div>
+        <div class="btn-group"><button class="btn btn-warning" id="heatBtn">🔥 升温</button><button class="btn btn-warning" id="coolBtn">❄️ 降温</button><button class="btn btn-danger" id="breakBtn">✨ 渡劫</button></div>
     </div>
 
-    <div class="log-area" id="logArea">
-        > 轮回重生，天道残酷，愿此生成仙！<br>
-        > 炉火至关重要，寻找道侣/仙缘是唯一生机。<br>
-        > 点击「开启声音」按钮激活音效！
-    </div>
+    <div class="log-area" id="logArea">> 点击「开启声音」激活音效<br>> 炉火最佳区间45-65°C<br>> 探索可能触发奇遇事件<br>> 稳扎稳打，总能通关！</div>
     <button class="reset-btn" id="resetBtn">🔄 轮回重生</button>
-    <footer>※ 高难度硬核修仙 | 挑战飞升九境 ※</footer>
 </div>
 
-<div id="resultModal" class="modal hidden">
-    <div class="modal-content">
-        <h2 id="modalTitle">🏆 飞升成圣 🏆</h2>
-        <div class="modal-stats" id="modalStats"></div>
-        <button class="modal-btn" id="closeModal">轮回再修</button>
-    </div>
-</div>
+<div id="branchModal" class="modal-overlay hidden"><div class="choice-modal"><h3 id="branchTitle">天命抉择</h3><div id="branchDesc" class="choice-desc"></div><div id="branchBtns" class="choice-buttons"></div></div></div>
+<div id="resultModal" class="modal-overlay hidden"><div class="result-modal"><h2 id="resultTitle">🏆 飞升成圣</h2><div id="resultStats" class="modal-stats"></div><button id="closeResult" class="choice-btn">轮回再修</button></div></div>
 
 <script>
-    // ==================== 音效系统（需要用户点击激活）====================
-    let audioEnabled = false;
-    let audioCtx = null;
-    
-    function initAudio() {
-        if (!audioCtx) {
-            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        }
-        if (audioCtx.state === 'suspended') {
-            audioCtx.resume();
-        }
-    }
-    
-    function playBeep(type) {
-        if (!audioEnabled) return;
+    // ========== 平衡难度：保证能通关 ==========
+    const REALMS = ["炼气期","筑基期","结丹期","元婴期","化神期","渡劫期","大乘期","真仙境","金仙境"];
+    // 回合数：前期充足，后期够用
+    const TURN_LIMITS = [14, 13, 12, 12, 11, 10, 10, 9, 20];
+    // 死亡率：有挑战但不绝望
+    const DEATH_RATES = [0.05, 0.08, 0.12, 0.18, 0.25, 0.35, 0.45, 0.55, 0];
+
+    let game = {
+        realm:0, cult:0, fire:50, herbs:6, ores:5, blood:3,
+        turns:TURN_LIMITS[0], over:false, win:false, deathMsg:"",
+        hasCompanion:false, hasImmortal:false, totalActions:0
+    };
+
+    // 音效系统
+    let audioEnabled = false, audioCtx = null;
+    function initAudio() { if(!audioCtx) audioCtx = new (window.AudioContext||window.webkitAudioContext)(); if(audioCtx.state==='suspended') audioCtx.resume(); }
+    function playSound(type) {
+        if(!audioEnabled) return;
         try {
             initAudio();
             const now = audioCtx.currentTime;
-            const oscillator = audioCtx.createOscillator();
-            const gainNode = audioCtx.createGain();
-            oscillator.connect(gainNode);
-            gainNode.connect(audioCtx.destination);
-            
-            if (type === 'success') {
-                oscillator.frequency.value = 523.25;
-                gainNode.gain.setValueAtTime(0.1, now);
-                gainNode.gain.exponentialRampToValueAtTime(0.0001, now + 0.25);
-                oscillator.start();
-                oscillator.stop(now + 0.25);
-            } else if (type === 'fail') {
-                oscillator.frequency.value = 220;
-                gainNode.gain.setValueAtTime(0.1, now);
-                gainNode.gain.exponentialRampToValueAtTime(0.0001, now + 0.35);
-                oscillator.start();
-                oscillator.stop(now + 0.35);
-            } else if (type === 'breakthrough') {
-                oscillator.frequency.value = 659.25;
-                gainNode.gain.setValueAtTime(0.15, now);
-                gainNode.gain.exponentialRampToValueAtTime(0.0001, now + 0.4);
-                oscillator.start();
-                oscillator.stop(now + 0.4);
-                setTimeout(() => {
-                    if (!audioEnabled) return;
-                    const osc2 = audioCtx.createOscillator();
-                    const gain2 = audioCtx.createGain();
-                    osc2.connect(gain2);
-                    gain2.connect(audioCtx.destination);
-                    osc2.frequency.value = 880;
-                    gain2.gain.setValueAtTime(0.1, now + 0.25);
-                    gain2.gain.exponentialRampToValueAtTime(0.0001, now + 0.55);
-                    osc2.start();
-                    osc2.stop(now + 0.55);
-                }, 100);
-            } else if (type === 'click') {
-                oscillator.frequency.value = 800;
-                gainNode.gain.setValueAtTime(0.03, now);
-                gainNode.gain.exponentialRampToValueAtTime(0.0001, now + 0.08);
-                oscillator.start();
-                oscillator.stop(now + 0.08);
-            } else if (type === 'death') {
-                oscillator.frequency.value = 150;
-                gainNode.gain.setValueAtTime(0.15, now);
-                gainNode.gain.exponentialRampToValueAtTime(0.0001, now + 0.7);
-                oscillator.start();
-                oscillator.stop(now + 0.7);
-            }
-        } catch(e) { console.log("音效失败", e); }
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain); gain.connect(audioCtx.destination);
+            if(type==='click'){ osc.frequency.value=800; gain.gain.setValueAtTime(0.05,now); gain.gain.exponentialRampToValueAtTime(0.0001,now+0.08); osc.start(); osc.stop(now+0.08); }
+            if(type==='success'){ osc.frequency.value=523; gain.gain.setValueAtTime(0.1,now); gain.gain.exponentialRampToValueAtTime(0.0001,now+0.25); osc.start(); osc.stop(now+0.25); }
+            if(type==='fail'){ osc.frequency.value=220; gain.gain.setValueAtTime(0.1,now); gain.gain.exponentialRampToValueAtTime(0.0001,now+0.35); osc.start(); osc.stop(now+0.35); }
+            if(type==='break'){ osc.frequency.value=659; gain.gain.setValueAtTime(0.12,now); gain.gain.exponentialRampToValueAtTime(0.0001,now+0.4); osc.start(); osc.stop(now+0.4); }
+            if(type==='death'){ osc.frequency.value=150; gain.gain.setValueAtTime(0.15,now); gain.gain.exponentialRampToValueAtTime(0.0001,now+0.7); osc.start(); osc.stop(now+0.7); }
+        } catch(e) {}
     }
 
-    // 开启声音
-    const soundBtn = document.getElementById('soundBtn');
-    soundBtn.addEventListener('click', () => {
-        if (!audioEnabled) {
-            initAudio();
-            audioEnabled = true;
-            soundBtn.innerHTML = '🔊 声音已开启';
-            soundBtn.classList.add('active');
-            playBeep('success');
-            addLog("🔊 音效已开启！", false);
-        }
-    });
+    // DOM
+    const cultSpan=document.getElementById("cultVal"), fireSpan=document.getElementById("fireVal"), turnSpan=document.getElementById("turnVal");
+    const realmSpan=document.getElementById("realmVal"), progressText=document.getElementById("progressText"), realmBar=document.getElementById("realmBar");
+    const realmNameSpan=document.getElementById("realmName"), fireStatusSpan=document.getElementById("fireStatus"), fireBar=document.getElementById("fireBar");
+    const herbSpan=document.getElementById("herbCount"), oreSpan=document.getElementById("oreCount"), bloodSpan=document.getElementById("bloodCount");
+    const companionSpan=document.getElementById("companionText"), immortalSpan=document.getElementById("immortalText");
+    const logArea=document.getElementById("logArea");
+    const branchModal=document.getElementById("branchModal"), branchTitle=document.getElementById("branchTitle");
+    const branchDesc=document.getElementById("branchDesc"), branchBtns=document.getElementById("branchBtns");
+    const resultModal=document.getElementById("resultModal"), resultTitle=document.getElementById("resultTitle");
+    const resultStats=document.getElementById("resultStats"), closeResult=document.getElementById("closeResult");
+    const exploreBtn=document.getElementById("exploreBtn"), alchemyBtn=document.getElementById("alchemyBtn");
+    const heatBtn=document.getElementById("heatBtn"), coolBtn=document.getElementById("coolBtn");
+    const breakBtn=document.getElementById("breakBtn"), resetBtn=document.getElementById("resetBtn");
+    const soundBtn=document.getElementById("soundBtn");
+    const gameContainer=document.getElementById("gameContainer");
+    const lightning=document.getElementById("lightning");
 
-    // 动效函数
-    function animateButton(btn) {
-        if (!btn) return;
-        btn.classList.add('btn-pulse');
-        setTimeout(() => btn.classList.remove('btn-pulse'), 150);
-        playBeep('click');
+    function showResultPopup(msg, isGood) {
+        let div = document.createElement("div");
+        div.className = "result-pop";
+        div.innerHTML = msg;
+        div.style.background = isGood ? "#2c5a2c" : "#5a2a1c";
+        document.body.appendChild(div);
+        setTimeout(()=>div.remove(), 1500);
     }
-    
-    function animateStatChange(statId, delta, isPositive) {
-        const statDiv = document.getElementById(statId);
-        if (statDiv) {
-            statDiv.classList.add('pulse');
-            setTimeout(() => statDiv.classList.remove('pulse'), 200);
-        }
-        const valueSpan = document.querySelector(`#${statId} .stat-value`);
-        if (valueSpan) {
-            valueSpan.classList.add(isPositive ? 'plus' : 'minus');
-            setTimeout(() => valueSpan.classList.remove(isPositive ? 'plus' : 'minus'), 200);
-        }
-        // 飘字效果
-        const floatDiv = document.createElement('div');
+
+    function animateStat(statId, delta, isPositive) {
+        let statDiv = document.getElementById(statId);
+        if(statDiv) { statDiv.classList.add('pulse'); setTimeout(()=>statDiv.classList.remove('pulse'),200); }
+        let floatDiv = document.createElement('div');
         floatDiv.className = 'float-number';
-        floatDiv.style.left = (window.innerWidth / 2) + 'px';
-        floatDiv.style.top = (window.innerHeight / 2 - 50) + 'px';
+        floatDiv.style.left = (window.innerWidth/2)+'px';
+        floatDiv.style.top = (window.innerHeight/2-50)+'px';
         floatDiv.style.color = isPositive ? '#aaffaa' : '#ffaa88';
-        floatDiv.innerHTML = (isPositive ? '+' : '') + delta;
+        floatDiv.innerHTML = (isPositive?'+':'')+delta;
         document.body.appendChild(floatDiv);
-        setTimeout(() => floatDiv.remove(), 800);
+        setTimeout(()=>floatDiv.remove(),800);
     }
-    
-    function shakeScreen() {
-        const container = document.getElementById('gameContainer');
-        container.classList.add('shake');
-        setTimeout(() => container.classList.remove('shake'), 300);
-    }
-    
-    function lightningFlash() {
-        const lightning = document.getElementById('lightning');
-        lightning.classList.add('flash');
-        setTimeout(() => lightning.classList.remove('flash'), 150);
-    }
-    
-    // 境界列表
-    const REALMS = ["炼气期", "筑基期", "结丹期", "元婴期", "化神期", "渡劫期", "大乘期", "真仙境", "金仙境"];
-    const TURN_LIMITS = [10, 9, 10, 11, 12, 13, 14, 15, 18];
-    const DEATH_RATES = [0.12, 0.22, 0.30, 0.40, 0.50, 0.60, 0.70, 0.80, 0.0];
 
-    let game = {
-        realmIdx: 0,
-        cultivation: 0,
-        fireTemp: 50,
-        herbs: 5,
-        ores: 5,
-        blood: 3,
-        turnsLeft: TURN_LIMITS[0],
-        gameOver: false,
-        gameWin: false,
-        deathCause: "",
-        hasCompanion: false,
-        companionBonus: 0,
-        hasImmortal: false,
-        immortalBonus: 0,
-        totalTurnsUsed: 0
-    };
-
-    // DOM 元素
-    const cultivationVal = document.getElementById("cultivationVal");
-    const fireVal = document.getElementById("fireVal");
-    const turnLeftSpan = document.getElementById("turnLeft");
-    const realmIndexSpan = document.getElementById("realmIndex");
-    const realmBar = document.getElementById("realmBar");
-    const realmProgressText = document.getElementById("realmProgressText");
-    const currentRealmSpan = document.getElementById("currentRealm");
-    const fireFill = document.getElementById("fireFill");
-    const fireStatusSpan = document.getElementById("fireStatus");
-    const herbCountSpan = document.getElementById("herbCount");
-    const oreCountSpan = document.getElementById("oreCount");
-    const bloodCountSpan = document.getElementById("bloodCount");
-    const companionStatusSpan = document.getElementById("companionStatus");
-    const immortalStatusSpan = document.getElementById("immortalStatus");
-    const logArea = document.getElementById("logArea");
-    const modal = document.getElementById("resultModal");
-    const modalTitle = document.getElementById("modalTitle");
-    const modalStats = document.getElementById("modalStats");
-    const closeModalBtn = document.getElementById("closeModal");
-
-    const exploreBtn = document.getElementById("exploreBtn");
-    const alchemyBtn = document.getElementById("alchemyBtn");
-    const adjustFireUp = document.getElementById("adjustFireUp");
-    const adjustFireDown = document.getElementById("adjustFireDown");
-    const breakthroughBtn = document.getElementById("breakthroughBtn");
-    const resetBtn = document.getElementById("resetBtn");
-
-    function addLog(msg, isError) {
-        const p = document.createElement("div");
-        p.className = "log-entry";
-        p.innerHTML = (isError ? "⚠️ " : "✨ ") + msg;
+    function addLog(msg, isErr) {
+        let p = document.createElement("div");
+        p.innerHTML = (isErr ? "⚠️ " : "✨ ") + msg;
         logArea.appendChild(p);
         p.scrollIntoView({ behavior: "smooth", block: "nearest" });
-        while (logArea.children.length > 22) logArea.removeChild(logArea.firstChild);
-    }
-
-    function clampValues() {
-        game.cultivation = Math.min(100, Math.max(0, game.cultivation));
-        game.fireTemp = Math.min(100, Math.max(0, game.fireTemp));
-        game.herbs = Math.max(0, game.herbs);
-        game.ores = Math.max(0, game.ores);
-        game.blood = Math.max(0, game.blood);
-        if (game.turnsLeft < 0) game.turnsLeft = 0;
+        while(logArea.children.length>18) logArea.removeChild(logArea.firstChild);
     }
 
     function updateUI() {
-        clampValues();
-        let oldCult = parseInt(cultivationVal.innerText) || 0;
-        let cultDelta = game.cultivation - oldCult;
-        if (cultDelta !== 0) {
-            animateStatChange('cultStat', Math.abs(cultDelta), cultDelta > 0);
-            if (cultDelta > 0) playBeep('success');
-            else if (cultDelta < -5) playBeep('fail');
-        }
-        cultivationVal.innerText = game.cultivation;
-        fireVal.innerText = game.fireTemp;
-        turnLeftSpan.innerText = game.turnsLeft;
-        realmIndexSpan.innerText = `${game.realmIdx+1}/${REALMS.length}`;
-        
-        let progressPercent = (game.cultivation / 100) * 100;
-        realmBar.style.width = `${progressPercent}%`;
-        realmProgressText.innerText = `${game.cultivation} / 100`;
-        
-        if (game.gameWin) currentRealmSpan.innerHTML = "⭐ 金仙大圆满 · 飞升成圣 ⭐";
-        else if (game.gameOver) currentRealmSpan.innerHTML = "💀 身死道消 · 魂归天地 💀";
-        else currentRealmSpan.innerHTML = `⚡ ${REALMS[game.realmIdx]} ⚡`;
-        
-        fireFill.style.width = `${game.fireTemp}%`;
-        if (game.fireTemp < 25) fireStatusSpan.innerHTML = "❄️ 冰寒刺骨";
-        else if (game.fireTemp < 45) fireStatusSpan.innerHTML = "🌡️ 微温偏冷";
-        else if (game.fireTemp <= 65) fireStatusSpan.innerHTML = "🔥 赤焰真火";
-        else if (game.fireTemp <= 85) fireStatusSpan.innerHTML = "🌋 烈焰翻腾";
-        else fireStatusSpan.innerHTML = "💀 焚天灭地";
-        
-        herbCountSpan.innerText = game.herbs;
-        oreCountSpan.innerText = game.ores;
-        bloodCountSpan.innerText = game.blood;
-        
-        companionStatusSpan.innerHTML = game.hasCompanion ? "❤️ 相伴" : "💔 暂无";
-        immortalStatusSpan.innerHTML = game.hasImmortal ? "✨ 有缘" : "🌙 未遇";
-        
-        let disabled = game.gameOver || game.gameWin;
-        exploreBtn.disabled = disabled;
-        alchemyBtn.disabled = disabled;
-        adjustFireUp.disabled = disabled;
-        adjustFireDown.disabled = disabled;
-        breakthroughBtn.disabled = disabled;
+        cultSpan.innerText=game.cult; fireSpan.innerText=game.fire; turnSpan.innerText=game.turns;
+        realmSpan.innerText=`${game.realm+1}/${REALMS.length}`;
+        let percent=(game.cult/100)*100;
+        realmBar.style.width=percent+"%";
+        progressText.innerText=game.cult+"/100";
+        if(game.win) realmNameSpan.innerHTML="⭐ 飞升成圣 ⭐";
+        else if(game.over) realmNameSpan.innerHTML="💀 身死道消 💀";
+        else realmNameSpan.innerHTML=`⚡ ${REALMS[game.realm]} ⚡`;
+        fireBar.style.width=game.fire+"%";
+        if(game.fire<25) fireStatusSpan.innerText="❄️ 冰寒";
+        else if(game.fire<45) fireStatusSpan.innerText="🌡️ 偏冷";
+        else if(game.fire<=65) fireStatusSpan.innerText="🔥 真火";
+        else if(game.fire<=85) fireStatusSpan.innerText="🌋 烈焰";
+        else fireStatusSpan.innerText="💀 焚天";
+        herbSpan.innerText=game.herbs; oreSpan.innerText=game.ores; bloodSpan.innerText=game.blood;
+        companionSpan.innerText=game.hasCompanion?"❤️ 相伴":"暂无";
+        immortalSpan.innerText=game.hasImmortal?"✨ 有缘":"未遇";
+        let d=game.over||game.win;
+        exploreBtn.disabled=d; alchemyBtn.disabled=d; heatBtn.disabled=d; coolBtn.disabled=d; breakBtn.disabled=d;
     }
 
     function consumeTurn() {
-        if (game.gameOver || game.gameWin) return false;
-        game.turnsLeft--;
-        game.totalTurnsUsed++;
-        if (game.turnsLeft < 0) game.turnsLeft = 0;
+        if(game.over||game.win) return false;
+        game.turns--; game.totalActions++;
         updateUI();
-        if (game.turnsLeft === 0 && game.cultivation < 100 && !game.gameOver && !game.gameWin) {
-            die(`【道心崩溃】在${REALMS[game.realmIdx]}停留太久，未能突破，心魔侵蚀而亡...`);
-            return false;
-        }
+        if(game.turns<=0 && game.cult<100 && !game.over && !game.win) die("道心崩溃，未能突破...");
         return true;
     }
 
-    function die(cause) {
-        if (game.gameOver || game.gameWin) return;
-        game.gameOver = true;
-        game.deathCause = cause;
-        addLog(cause, true);
-        playBeep('death');
-        shakeScreen();
+    function die(msg) {
+        if(game.over||game.win) return;
+        game.over=true; game.deathMsg=msg;
+        addLog(msg,true); playSound('death');
+        gameContainer.classList.add('shake'); setTimeout(()=>gameContainer.classList.remove('shake'),300);
         updateUI();
-        showResultModal(false);
+        resultTitle.innerText="💀 身死道消 💀";
+        resultStats.innerHTML=`<p>最终境界：${REALMS[game.realm]}</p><p>总行动：${game.totalActions}</p><p>道侣：${game.hasCompanion?"是":"否"}</p><p>仙缘：${game.hasImmortal?"是":"否"}</p><p>结局：${msg.substring(0,40)}</p>`;
+        resultModal.classList.remove("hidden");
     }
 
     function winGame() {
-        game.gameWin = true;
-        playBeep('breakthrough');
-        lightningFlash();
+        game.win=true; playSound('break');
+        lightning.classList.add('flash'); setTimeout(()=>lightning.classList.remove('flash'),200);
         updateUI();
-        showResultModal(true);
+        resultTitle.innerText="🏆 飞升成圣 🏆";
+        resultStats.innerHTML=`<p>最终境界：金仙境</p><p>总行动：${game.totalActions}</p><p>道侣：${game.hasCompanion?"是":"否"}</p><p>仙缘：${game.hasImmortal?"是":"否"}</p><p>功德圆满，超脱三界！</p>`;
+        resultModal.classList.remove("hidden");
     }
 
-    function showResultModal(isWin) {
-        modalTitle.innerHTML = isWin ? "🏆 飞升成圣 🏆" : "💀 身死道消 💀";
-        modalStats.innerHTML = `
-            <p>🏁 最终境界：${isWin ? "金仙境·圆满" : REALMS[game.realmIdx]}</p>
-            <p>📊 总行动次数：${game.totalTurnsUsed}</p>
-            <p>💑 道侣相伴：${game.hasCompanion ? "是" : "否"}</p>
-            <p>✨ 仙人指路：${game.hasImmortal ? "是" : "否"}</p>
-            <p>🔥 最终炉火：${game.fireTemp}°C</p>
-            <p>📜 结局：${isWin ? "功德圆满，超脱三界" : game.deathCause.substring(0, 50)}</p>
-        `;
-        modal.classList.remove("hidden");
+    // 分支事件弹窗
+    function showBranchEvent(eventObj, callback) {
+        branchTitle.innerText = eventObj.title;
+        branchDesc.innerText = eventObj.desc;
+        branchBtns.innerHTML = "";
+        eventObj.options.forEach(opt => {
+            let btn = document.createElement("button");
+            btn.innerText = opt.text;
+            btn.className = "choice-btn";
+            btn.onclick = () => {
+                branchModal.classList.add("hidden");
+                callback(opt);
+            };
+            branchBtns.appendChild(btn);
+        });
+        branchModal.classList.remove("hidden");
     }
 
-    function getAlchemySuccessRate() {
-        let base = 60;
-        let temp = game.fireTemp;
-        if (temp < 20) base = 12;
-        else if (temp < 30) base = 22;
-        else if (temp < 40) base = 38;
-        else if (temp < 45) base = 52;
-        else if (temp <= 65) base = 78;
-        else if (temp <= 75) base = 50;
-        else if (temp <= 85) base = 30;
-        else base = 15;
-        if (game.hasCompanion) base += 8;
-        return Math.min(92, base);
+    // 奇遇事件池
+    const MYSTIC_EVENTS = [
+        { title: "🌊 上古秘境", desc: "你发现一座上古洞府，有两件宝物可选：",
+          options: [{ text: "📖 天书 (+15修为)", effect: (g)=>{ g.cult=Math.min(100,g.cult+15); showResultPopup("修为+15！",true); } },
+                     { text: "🔥 控火诀 (炉火稳定)", effect: (g)=>{ g.fire=55; showResultPopup("炉火重置为55°C",true); } }] },
+        { title: "💕 红尘劫", desc: "一位神秘女子愿与你结为道侣：",
+          options: [{ text: "💑 结为道侣 (+8%炼丹)", effect: (g)=>{ if(!g.hasCompanion){ g.hasCompanion=true; g.turns+=1; showResultPopup("结为道侣，炼丹+8%",true); } } },
+                     { text: "🚫 拒绝 (+10修为)", effect: (g)=>{ g.cult=Math.min(100,g.cult+10); showResultPopup("修为+10",true); } }] },
+        { title: "⚡ 雷劫奇遇", desc: "天降异象，你该如何选择？",
+          options: [{ text: "🌈 引雷淬体 (风险小)", effect: (g)=>{ if(Math.random()<0.15) die("引雷失败..."); else{ g.cult=Math.min(100,g.cult+20); showResultPopup("淬体成功！修为+20",true); } } },
+                     { text: "🌀 躲避观望 (+2回合)", effect: (g)=>{ g.turns+=2; showResultPopup("获得2回合",true); } }] },
+        { title: "🍵 神秘老人", desc: "一位老仙人向你卖丹药：",
+          options: [{ text: "💰 购买灵丹 (消耗3灵草)", effect: (g)=>{ if(g.herbs>=3){ g.herbs-=3; g.cult=Math.min(100,g.cult+18); showResultPopup("服用灵丹，修为+18",true); } else showResultPopup("灵草不足！",false); } },
+                     { text: "🙏 虚心请教", effect: (g)=>{ g.cult=Math.min(100,g.cult+8); showResultPopup("修为+8",true); } }] }
+    ];
+
+    function tryTriggerEvent() {
+        if(Math.random()<0.12 && !game.over && !game.win) {
+            let ev = MYSTIC_EVENTS[Math.floor(Math.random()*MYSTIC_EVENTS.length)];
+            showBranchEvent(ev, (choice) => {
+                choice.effect(game);
+                playSound('success');
+                updateUI();
+                consumeTurn();
+            });
+            return true;
+        }
+        return false;
     }
 
-    function getAlchemyGain() {
-        let base = 14 + Math.floor(Math.random() * 18);
-        let temp = game.fireTemp;
-        let multiplier = 1.0;
-        if (temp >= 45 && temp <= 65) multiplier = 1.0;
-        else if (temp >= 35 && temp < 45) multiplier = 0.7;
-        else if (temp > 65 && temp <= 75) multiplier = 0.65;
-        else if (temp > 75 && temp <= 85) multiplier = 0.5;
-        else multiplier = 0.35;
-        if (game.hasImmortal) multiplier += 0.25;
-        return Math.max(4, Math.floor(base * multiplier));
+    function getAlchemyRate() { 
+        let t=game.fire; 
+        let base=70;
+        if(t<25) base=30;
+        else if(t<45) base=55;
+        else if(t<=65) base=82;
+        else if(t<=85) base=60;
+        else base=35;
+        if(game.hasCompanion) base+=8;
+        return Math.min(92,Math.max(20,base));
+    }
+    
+    function getAlchemyGain() { 
+        let base=14+Math.floor(Math.random()*16); 
+        let t=game.fire; 
+        let mul=1;
+        if(t>=45&&t<=65) mul=1;
+        else if(t>=35) mul=0.75;
+        else mul=0.6;
+        if(game.hasImmortal) mul+=0.2;
+        return Math.max(5,Math.floor(base*mul)); 
     }
 
     function alchemy() {
-        if (game.gameOver || game.gameWin) return;
-        animateButton(alchemyBtn);
-        if (game.herbs < 2 || game.ores < 1) {
-            addLog("材料不足！需要2灵草+1矿石", true);
-            playBeep('fail');
-            return;
-        }
-        game.herbs -= 2;
-        game.ores -= 1;
-        let rate = getAlchemySuccessRate();
-        let roll = Math.random() * 100;
-        
-        if (roll < rate) {
-            let gain = getAlchemyGain();
-            game.cultivation = Math.min(100, game.cultivation + gain);
-            addLog(`炼丹成功！修为+${gain}`, false);
-            playBeep('success');
-            let tempChange = Math.floor(Math.random() * 5) - 2;
-            game.fireTemp = Math.min(100, Math.max(0, game.fireTemp + tempChange));
+        if(game.over||game.win) return;
+        playSound('click');
+        if(game.herbs<2||game.ores<1){ addLog("材料不足",true); return; }
+        game.herbs-=2; game.ores-=1;
+        if(Math.random()*100<getAlchemyRate()) {
+            let gain=getAlchemyGain();
+            game.cult=Math.min(100,game.cult+gain);
+            addLog(`炼丹成功！修为+${gain}`,false);
+            animateStat('cultStat',gain,true);
+            showResultPopup(`修为 +${gain}`,true);
+            playSound('success');
+            let delta=Math.floor(Math.random()*5)-2;
+            game.fire=Math.min(100,Math.max(0,game.fire+delta));
         } else {
-            let loss = 6 + Math.floor(Math.random() * 12);
-            game.cultivation = Math.max(0, game.cultivation - loss);
-            addLog(`炼丹失败！修为-${loss}`, true);
-            playBeep('fail');
-            let fluct = 5 + Math.floor(Math.random() * 10);
-            game.fireTemp = Math.min(100, Math.max(0, game.fireTemp + (Math.random()>0.5 ? fluct : -fluct)));
-            if (game.fireTemp > 92 && Math.random() < 0.25) {
-                die("丹炉爆炸！你被烈焰吞噬，形神俱灭...");
-                return;
-            }
+            let loss=5+Math.floor(Math.random()*10);
+            game.cult=Math.max(0,game.cult-loss);
+            addLog(`炼丹失败！修为-${loss}`,true);
+            animateStat('cultStat',loss,false);
+            showResultPopup(`修为 -${loss}`,false);
+            playSound('fail');
+            let fluct=4+Math.floor(Math.random()*8);
+            game.fire=Math.min(100,Math.max(0,game.fire+(Math.random()>0.5?fluct:-fluct)));
+            if(game.fire>92 && Math.random()<0.15) die("丹炉爆炸而亡...");
         }
-        clampValues();
         updateUI();
         consumeTurn();
     }
 
     function explore() {
-        if (game.gameOver || game.gameWin) return;
-        animateButton(exploreBtn);
-        let r = Math.random();
-        
-        if (r < 0.18 && !game.hasCompanion) {
-            game.hasCompanion = true;
-            game.companionBonus = 8;
-            addLog("💕 邂逅修仙道侣！你们结为伴侣，炼丹成功率+8%", false);
-            game.turnsLeft += 2;
-            addLog("道侣赠予灵丹，额外获得2回合！");
-            playBeep('success');
-            consumeTurn();
+        if(game.over||game.win) return;
+        playSound('click');
+        if(tryTriggerEvent()) return;
+        let r=Math.random();
+        if(r<0.15 && !game.hasCompanion){
+            game.hasCompanion=true; addLog("💕 邂逅道侣！炼丹+8%",false); game.turns+=1; playSound('success');
+            showResultPopup("结为道侣！",true);
+        } else if(r<0.28 && !game.hasImmortal){
+            game.hasImmortal=true; addLog("✨ 遇仙缘！收益+30%",false); game.cult=Math.min(100,game.cult+10); game.turns+=1; playSound('success');
+            showResultPopup("得仙人指点！",true);
+        } else if(r<0.60){
+            let h=2+Math.floor(Math.random()*7), o=1+Math.floor(Math.random()*6);
+            game.herbs+=h; game.ores+=o;
+            addLog(`收获灵草+${h}，矿石+${o}`,false);
+            showResultPopup(`灵草+${h} 矿石+${o}`,true);
+            playSound('success');
+        } else if(r<0.80){
+            let g=8+Math.floor(Math.random()*14);
+            game.cult=Math.min(100,game.cult+g);
+            addLog(`顿悟！修为+${g}`,false);
+            animateStat('cultStat',g,true);
+            showResultPopup(`修为 +${g}`,true);
+            playSound('success');
+        } else {
+            let loss=5+Math.floor(Math.random()*8);
+            addLog("遭遇妖兽！修为-"+loss,true);
+            game.cult=Math.max(0,game.cult-loss);
+            animateStat('cultStat',loss,false);
+            showResultPopup(`修为 -${loss}`,false);
+            if(game.cult<5&&Math.random()<0.15) die("被妖兽重伤而死...");
+        }
+        updateUI();
+        consumeTurn();
+    }
+
+    function adjustTemp(up) {
+        if(game.over||game.win) return;
+        playSound('click');
+        let delta=up?10:-10;
+        game.fire=Math.min(100,Math.max(0,game.fire+delta));
+        addLog(up?"炉火+10":"炉火-10",false);
+        showResultPopup(up?"炉火 +10":"炉火 -10",true);
+        updateUI();
+        consumeTurn();
+    }
+
+    function breakthrough() {
+        if(game.over||game.win) return;
+        playSound('click');
+        if(game.cult<100){ addLog(`修为不足${game.cult}/100`,true); return; }
+        if(game.realm>=REALMS.length-1){ winGame(); return; }
+        let rate=DEATH_RATES[game.realm];
+        if(game.hasCompanion) rate=Math.max(0,rate-0.03);
+        let successRate = Math.floor((1-rate)*100);
+        showResultPopup(`渡劫成功率：${successRate}%`, rate<0.5);
+        if(Math.random()<rate){
+            die(`渡劫失败！${REALMS[game.realm]}突破时身死...`);
             return;
         }
-        
-        if (r < 0.32 && !game.hasImmortal) {
-            game.hasImmortal = true;
-            game.immortalBonus = 15;
-            addLog("✨ 遇仙缘！仙人指点，探索收益+30%", false);
-            game.cultivation = Math.min(100, game.cultivation + 12);
-            addLog("修为+12");
-            game.turnsLeft += 2;
-            addLog("仙人赐福，增加2回合！");
-            playBeep('breakthrough');
-            consumeTurn();
-            return;
-        }
-        
-        if (r
+        game.realm++;
+        game.cult=0;
+        game.fire=55;
+        game.turns=TURN_LIMITS[game.realm];
+        if(game.hasCompanion) game.turns+=1;
+        if(game.hasImmortal) game.turns+=2;
+        addLog(`🎉 渡劫成功！晋升${REALMS[game.realm]}`,false);
+        showResultPopup(`突破至 ${REALMS[game.realm]}！`,true);
+        playSound('break');
+        lightning.classList.add('flash'); setTimeout(()=>lightning.classList.remove('flash'),150);
+        updateUI();
+        consumeTurn();
+    }
+
+    function reset() {
+        game={ realm:0, cult:0, fire:50, herbs:6, ores:5, blood:3, turns:TURN_LIMITS[0], over:false, win:false, deathMsg:"", hasCompanion:false, hasImmortal:false, totalActions:0 };
+        logArea.innerHTML="> 点击「开启声音」激活音效<br>> 炉火最佳区间45-65°C<br>> 探索可能触发奇遇事件<br>> 稳扎稳打，总能通关！";
+        updateUI();
+        addLog("轮回重生，道心重燃",false);
+        resultModal.classList.add("hidden");
+        branchModal.classList.add("hidden");
+    }
+
+    soundBtn.onclick=()=>{ initAudio(); audioEnabled=true; soundBtn.innerText="🔊 声音已开"; soundBtn.classList.add("active"); playSound('success'); addLog("音效已开启！",false); };
+    exploreBtn.onclick=explore; alchemyBtn.onclick=alchemy; heatBtn.onclick=()=>adjustTemp(true); coolBtn.onclick=()=>adjustTemp(false);
+    breakBtn.onclick=breakthrough; resetBtn.onclick=reset; closeResult.onclick=()=>{ resultModal.classList.add("hidden"); reset(); };
+    reset();
+</script>
+</body>
+</html>
