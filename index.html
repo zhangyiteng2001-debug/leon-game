@@ -84,6 +84,24 @@
             margin-top: 4px;
         }
 
+        .sound-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: #5f4230;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 30px;
+            color: #ffdfaa;
+            font-size: 0.7rem;
+            cursor: pointer;
+            z-index: 10;
+        }
+        .sound-btn.active {
+            background: #7c9a4a;
+            color: white;
+        }
+
         .stats-bar {
             display: flex;
             justify-content: space-between;
@@ -272,9 +290,8 @@
             opacity: 0.5;
             pointer-events: none;
         }
-        /* 按钮脉冲动效 */
         .btn-pulse {
-            animation: btnPulse 0.2s ease-out;
+            animation: btnPulse 0.15s ease-out;
         }
         @keyframes btnPulse {
             0% { transform: scale(1); }
@@ -297,14 +314,8 @@
             animation: fadeInUp 0.2s ease-out;
         }
         @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(5px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .reset-btn {
@@ -391,14 +402,8 @@
             text-shadow: 0 0 3px black;
         }
         @keyframes floatUp {
-            0% {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
-            100% {
-                opacity: 0;
-                transform: translateY(-50px) scale(1.2);
-            }
+            0% { opacity: 1; transform: translateY(0) scale(1); }
+            100% { opacity: 0; transform: translateY(-50px) scale(1.2); }
         }
 
         footer {
@@ -412,6 +417,7 @@
 <body>
 <div class="lightning" id="lightning"></div>
 <div class="game-container" id="gameContainer">
+    <button class="sound-btn" id="soundBtn">🔇 开启声音</button>
     <div class="title">
         <h1>问 道 · 红 尘 劫</h1>
         <p>｜ 九死一生 逆天改命 ｜</p>
@@ -463,7 +469,7 @@
     <div class="log-area" id="logArea">
         > 轮回重生，天道残酷，愿此生成仙！<br>
         > 炉火至关重要，寻找道侣/仙缘是唯一生机。<br>
-        > 每境回合极紧，务必精打细算。
+        > 点击「开启声音」按钮激活音效！
     </div>
     <button class="reset-btn" id="resetBtn">🔄 轮回重生</button>
     <footer>※ 高难度硬核修仙 | 挑战飞升九境 ※</footer>
@@ -478,8 +484,10 @@
 </div>
 
 <script>
-    // ==================== 音效系统（Web Audio API）====================
+    // ==================== 音效系统（需要用户点击激活）====================
+    let audioEnabled = false;
     let audioCtx = null;
+    
     function initAudio() {
         if (!audioCtx) {
             audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -488,7 +496,9 @@
             audioCtx.resume();
         }
     }
+    
     function playBeep(type) {
+        if (!audioEnabled) return;
         try {
             initAudio();
             const now = audioCtx.currentTime;
@@ -498,57 +508,72 @@
             gainNode.connect(audioCtx.destination);
             
             if (type === 'success') {
-                oscillator.frequency.value = 523.25; // C5
-                gainNode.gain.setValueAtTime(0.15, now);
-                gainNode.gain.exponentialRampToValueAtTime(0.0001, now + 0.3);
+                oscillator.frequency.value = 523.25;
+                gainNode.gain.setValueAtTime(0.1, now);
+                gainNode.gain.exponentialRampToValueAtTime(0.0001, now + 0.25);
                 oscillator.start();
-                oscillator.stop(now + 0.3);
+                oscillator.stop(now + 0.25);
             } else if (type === 'fail') {
                 oscillator.frequency.value = 220;
+                gainNode.gain.setValueAtTime(0.1, now);
+                gainNode.gain.exponentialRampToValueAtTime(0.0001, now + 0.35);
+                oscillator.start();
+                oscillator.stop(now + 0.35);
+            } else if (type === 'breakthrough') {
+                oscillator.frequency.value = 659.25;
                 gainNode.gain.setValueAtTime(0.15, now);
                 gainNode.gain.exponentialRampToValueAtTime(0.0001, now + 0.4);
                 oscillator.start();
                 oscillator.stop(now + 0.4);
-            } else if (type === 'breakthrough') {
-                oscillator.frequency.value = 659.25;
-                gainNode.gain.setValueAtTime(0.2, now);
-                gainNode.gain.exponentialRampToValueAtTime(0.0001, now + 0.5);
-                oscillator.start();
-                oscillator.stop(now + 0.5);
                 setTimeout(() => {
+                    if (!audioEnabled) return;
                     const osc2 = audioCtx.createOscillator();
                     const gain2 = audioCtx.createGain();
                     osc2.connect(gain2);
                     gain2.connect(audioCtx.destination);
                     osc2.frequency.value = 880;
-                    gain2.gain.setValueAtTime(0.15, now + 0.3);
-                    gain2.gain.exponentialRampToValueAtTime(0.0001, now + 0.6);
+                    gain2.gain.setValueAtTime(0.1, now + 0.25);
+                    gain2.gain.exponentialRampToValueAtTime(0.0001, now + 0.55);
                     osc2.start();
-                    osc2.stop(now + 0.6);
+                    osc2.stop(now + 0.55);
                 }, 100);
             } else if (type === 'click') {
                 oscillator.frequency.value = 800;
-                gainNode.gain.setValueAtTime(0.05, now);
-                gainNode.gain.exponentialRampToValueAtTime(0.0001, now + 0.1);
+                gainNode.gain.setValueAtTime(0.03, now);
+                gainNode.gain.exponentialRampToValueAtTime(0.0001, now + 0.08);
                 oscillator.start();
-                oscillator.stop(now + 0.1);
+                oscillator.stop(now + 0.08);
             } else if (type === 'death') {
                 oscillator.frequency.value = 150;
-                gainNode.gain.setValueAtTime(0.2, now);
-                gainNode.gain.exponentialRampToValueAtTime(0.0001, now + 0.8);
+                gainNode.gain.setValueAtTime(0.15, now);
+                gainNode.gain.exponentialRampToValueAtTime(0.0001, now + 0.7);
                 oscillator.start();
-                oscillator.stop(now + 0.8);
+                oscillator.stop(now + 0.7);
             }
         } catch(e) { console.log("音效失败", e); }
     }
+
+    // 开启声音
+    const soundBtn = document.getElementById('soundBtn');
+    soundBtn.addEventListener('click', () => {
+        if (!audioEnabled) {
+            initAudio();
+            audioEnabled = true;
+            soundBtn.innerHTML = '🔊 声音已开启';
+            soundBtn.classList.add('active');
+            playBeep('success');
+            addLog("🔊 音效已开启！", false);
+        }
+    });
 
     // 动效函数
     function animateButton(btn) {
         if (!btn) return;
         btn.classList.add('btn-pulse');
-        setTimeout(() => btn.classList.remove('btn-pulse'), 200);
+        setTimeout(() => btn.classList.remove('btn-pulse'), 150);
         playBeep('click');
     }
+    
     function animateStatChange(statId, delta, isPositive) {
         const statDiv = document.getElementById(statId);
         if (statDiv) {
@@ -570,11 +595,13 @@
         document.body.appendChild(floatDiv);
         setTimeout(() => floatDiv.remove(), 800);
     }
+    
     function shakeScreen() {
         const container = document.getElementById('gameContainer');
         container.classList.add('shake');
         setTimeout(() => container.classList.remove('shake'), 300);
     }
+    
     function lightningFlash() {
         const lightning = document.getElementById('lightning');
         lightning.classList.add('flash');
@@ -833,25 +860,4 @@
             return;
         }
         
-        if (r < 0.65) {
-            let herbsGain = 2 + Math.floor(Math.random() * 7);
-            let oresGain = 1 + Math.floor(Math.random() * 5);
-            game.herbs += herbsGain;
-            game.ores += oresGain;
-            addLog(`探索到灵脉！灵草+${herbsGain}，矿石+${oresGain}`);
-            playBeep('success');
-        } 
-        else if (r < 0.82) {
-            let gainCult = 6 + Math.floor(Math.random() * 12);
-            game.cultivation = Math.min(100, game.cultivation + gainCult);
-            addLog(`顿悟天道！修为+${gainCult}`);
-            playBeep('success');
-        }
-        else if (r < 0.93) {
-            let gainFire = 4 + Math.floor(Math.random() * 8);
-            game.fireTemp = Math.min(100, game.fireTemp + gainFire);
-            addLog(`发现地火！炉火+${gainFire}`);
-        }
-        else {
-            addLog("探索遭遇妖兽！损失部分材料", true);
-           
+        if (r
