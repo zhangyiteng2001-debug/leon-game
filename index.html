@@ -19,6 +19,23 @@
             font-family: 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', monospace;
             padding: 20px;
             margin: 0;
+            position: relative;
+        }
+
+        /* 雷电特效层 */
+        .lightning {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            background: rgba(255,255,255,0);
+            z-index: 999;
+            transition: background 0.05s;
+        }
+        .lightning.flash {
+            background: rgba(255,255,200,0.7);
         }
 
         .game-container {
@@ -31,6 +48,17 @@
             box-shadow: 0 25px 40px rgba(0, 0, 0, 0.5), inset 0 1px 3px #fff8e7;
             padding: 20px 22px 28px;
             border: 1px solid #dbbc7c;
+            position: relative;
+            z-index: 1;
+            transition: transform 0.1s ease;
+        }
+        .game-container.shake {
+            animation: shake 0.3s ease-in-out 0s 2;
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
         }
 
         .title {
@@ -71,6 +99,11 @@
             flex: 1;
             text-align: center;
             box-shadow: inset 0 1px 2px #5f4a2e, 0 3px 6px rgba(0,0,0,0.3);
+            transition: transform 0.05s ease;
+        }
+        .stat-card.pulse {
+            transform: scale(1.05);
+            background: #4a3a28;
         }
 
         .stat-label {
@@ -84,6 +117,16 @@
             font-weight: bold;
             color: #f7e5b5;
             line-height: 1.2;
+            transition: all 0.1s ease;
+        }
+        .stat-value.plus {
+            color: #aaffaa;
+            text-shadow: 0 0 5px #00aa00;
+            transform: scale(1.1);
+        }
+        .stat-value.minus {
+            color: #ffaa88;
+            text-shadow: 0 0 5px #ff4400;
         }
 
         .danger-timer .stat-value {
@@ -112,8 +155,9 @@
             height: 100%;
             background: linear-gradient(90deg, #5fa83d, #e7b42c);
             border-radius: 30px;
-            transition: width 0.2s;
+            transition: width 0.3s ease;
         }
+
         .current-realm {
             text-align: center;
             font-size: 0.8rem;
@@ -143,12 +187,6 @@
             background: linear-gradient(90deg, #ff8c42, #ff5e00);
             border-radius: 30px;
             transition: width 0.2s;
-        }
-        .fire-tip {
-            font-size: 0.55rem;
-            color: #b87a3a;
-            margin-top: 4px;
-            text-align: center;
         }
 
         .companion-section {
@@ -182,10 +220,11 @@
             color: #5e3a1f;
             flex: 1;
             text-align: center;
+            transition: all 0.05s ease;
         }
-        .material span {
-            color: #c27e2a;
-            font-size: 1rem;
+        .material.gain {
+            background: #c8e6a0;
+            transform: scale(1.02);
         }
 
         .action-buttons {
@@ -209,7 +248,7 @@
             font-size: 0.9rem;
             color: #4a3020;
             cursor: pointer;
-            transition: 0.05s linear;
+            transition: all 0.05s linear;
             box-shadow: 0 3px 0 #b48b4b;
             text-align: center;
         }
@@ -233,6 +272,15 @@
             opacity: 0.5;
             pointer-events: none;
         }
+        /* 按钮脉冲动效 */
+        .btn-pulse {
+            animation: btnPulse 0.2s ease-out;
+        }
+        @keyframes btnPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(0.95); background: #e8d5a0; }
+            100% { transform: scale(1); }
+        }
 
         .log-area {
             background: #1e1912;
@@ -244,6 +292,19 @@
             font-family: monospace;
             color: #e7cf97;
             margin-top: 12px;
+        }
+        .log-entry {
+            animation: fadeInUp 0.2s ease-out;
+        }
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(5px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .reset-btn {
@@ -271,6 +332,11 @@
             align-items: center;
             z-index: 1000;
             backdrop-filter: blur(4px);
+            animation: fadeIn 0.3s;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
         .modal-content {
             background: linear-gradient(145deg, #fef0da, #f5e5c8);
@@ -281,6 +347,11 @@
             text-align: center;
             box-shadow: 0 20px 40px black;
             border: 2px solid #e9c27c;
+            animation: modalPop 0.2s ease-out;
+        }
+        @keyframes modalPop {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
         }
         .modal-content h2 {
             color: #8b5a2b;
@@ -294,9 +365,6 @@
             padding: 15px;
             color: #f7e5b5;
             margin: 15px 0;
-        }
-        .modal-stats p {
-            margin: 8px 0;
         }
         .modal-btn {
             background: #c9a25d;
@@ -312,6 +380,27 @@
             display: none;
         }
 
+        /* 飘字效果 */
+        .float-number {
+            position: fixed;
+            font-size: 1.2rem;
+            font-weight: bold;
+            pointer-events: none;
+            z-index: 10000;
+            animation: floatUp 0.8s ease-out forwards;
+            text-shadow: 0 0 3px black;
+        }
+        @keyframes floatUp {
+            0% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-50px) scale(1.2);
+            }
+        }
+
         footer {
             font-size: 0.5rem;
             text-align: center;
@@ -321,16 +410,17 @@
     </style>
 </head>
 <body>
-<div class="game-container">
+<div class="lightning" id="lightning"></div>
+<div class="game-container" id="gameContainer">
     <div class="title">
         <h1>问 道 · 红 尘 劫</h1>
         <p>｜ 九死一生 逆天改命 ｜</p>
     </div>
 
     <div class="stats-bar">
-        <div class="stat-card"><div class="stat-label">🧘 修为</div><div class="stat-value" id="cultivationVal">0</div></div>
-        <div class="stat-card"><div class="stat-label">🔥 炉火</div><div class="stat-value" id="fireVal">50</div></div>
-        <div class="stat-card danger-timer"><div class="stat-label">⏰ 剩余回合</div><div class="stat-value" id="turnLeft">7</div></div>
+        <div class="stat-card" id="cultStat"><div class="stat-label">🧘 修为</div><div class="stat-value" id="cultivationVal">0</div></div>
+        <div class="stat-card" id="fireStat"><div class="stat-label">🔥 炉火</div><div class="stat-value" id="fireVal">50</div></div>
+        <div class="stat-card danger-timer" id="turnStat"><div class="stat-label">⏰ 剩余回合</div><div class="stat-value" id="turnLeft">10</div></div>
         <div class="stat-card"><div class="stat-label">⚡ 境界</div><div class="stat-value" id="realmIndex">1/9</div></div>
     </div>
 
@@ -343,7 +433,6 @@
     <div class="fire-container">
         <div class="fire-header"><span>🔥 炉火温度</span><span id="fireStatus">温热适中</span></div>
         <div class="bar-bg"><div class="fire-bar-fill" id="fireFill"></div></div>
-        <div class="fire-tip">🌡️ 最佳区间:45-65°C | 偏离惩罚极重</div>
     </div>
 
     <div class="companion-section">
@@ -354,9 +443,9 @@
     </div>
 
     <div class="materials">
-        <div class="material">🌿 灵草: <span id="herbCount">3</span></div>
-        <div class="material">💎 矿石: <span id="oreCount">3</span></div>
-        <div class="material">🔥 兽血: <span id="bloodCount">2</span></div>
+        <div class="material" id="herbMat">🌿 灵草: <span id="herbCount">5</span></div>
+        <div class="material" id="oreMat">💎 矿石: <span id="oreCount">5</span></div>
+        <div class="material" id="bloodMat">🔥 兽血: <span id="bloodCount">3</span></div>
     </div>
 
     <div class="action-buttons">
@@ -372,10 +461,9 @@
     </div>
 
     <div class="log-area" id="logArea">
-        > 天道残酷，每一步都关乎生死！<br>
-        > 每境仅有少量回合，必须极限操作。<br>
-        > 炉火偏离最佳区间会严重惩罚炼丹。<br>
-        > 寻找道侣/仙缘是唯一生机。
+        > 轮回重生，天道残酷，愿此生成仙！<br>
+        > 炉火至关重要，寻找道侣/仙缘是唯一生机。<br>
+        > 每境回合极紧，务必精打细算。
     </div>
     <button class="reset-btn" id="resetBtn">🔄 轮回重生</button>
     <footer>※ 高难度硬核修仙 | 挑战飞升九境 ※</footer>
@@ -390,20 +478,121 @@
 </div>
 
 <script>
+    // ==================== 音效系统（Web Audio API）====================
+    let audioCtx = null;
+    function initAudio() {
+        if (!audioCtx) {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (audioCtx.state === 'suspended') {
+            audioCtx.resume();
+        }
+    }
+    function playBeep(type) {
+        try {
+            initAudio();
+            const now = audioCtx.currentTime;
+            const oscillator = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            oscillator.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            
+            if (type === 'success') {
+                oscillator.frequency.value = 523.25; // C5
+                gainNode.gain.setValueAtTime(0.15, now);
+                gainNode.gain.exponentialRampToValueAtTime(0.0001, now + 0.3);
+                oscillator.start();
+                oscillator.stop(now + 0.3);
+            } else if (type === 'fail') {
+                oscillator.frequency.value = 220;
+                gainNode.gain.setValueAtTime(0.15, now);
+                gainNode.gain.exponentialRampToValueAtTime(0.0001, now + 0.4);
+                oscillator.start();
+                oscillator.stop(now + 0.4);
+            } else if (type === 'breakthrough') {
+                oscillator.frequency.value = 659.25;
+                gainNode.gain.setValueAtTime(0.2, now);
+                gainNode.gain.exponentialRampToValueAtTime(0.0001, now + 0.5);
+                oscillator.start();
+                oscillator.stop(now + 0.5);
+                setTimeout(() => {
+                    const osc2 = audioCtx.createOscillator();
+                    const gain2 = audioCtx.createGain();
+                    osc2.connect(gain2);
+                    gain2.connect(audioCtx.destination);
+                    osc2.frequency.value = 880;
+                    gain2.gain.setValueAtTime(0.15, now + 0.3);
+                    gain2.gain.exponentialRampToValueAtTime(0.0001, now + 0.6);
+                    osc2.start();
+                    osc2.stop(now + 0.6);
+                }, 100);
+            } else if (type === 'click') {
+                oscillator.frequency.value = 800;
+                gainNode.gain.setValueAtTime(0.05, now);
+                gainNode.gain.exponentialRampToValueAtTime(0.0001, now + 0.1);
+                oscillator.start();
+                oscillator.stop(now + 0.1);
+            } else if (type === 'death') {
+                oscillator.frequency.value = 150;
+                gainNode.gain.setValueAtTime(0.2, now);
+                gainNode.gain.exponentialRampToValueAtTime(0.0001, now + 0.8);
+                oscillator.start();
+                oscillator.stop(now + 0.8);
+            }
+        } catch(e) { console.log("音效失败", e); }
+    }
+
+    // 动效函数
+    function animateButton(btn) {
+        if (!btn) return;
+        btn.classList.add('btn-pulse');
+        setTimeout(() => btn.classList.remove('btn-pulse'), 200);
+        playBeep('click');
+    }
+    function animateStatChange(statId, delta, isPositive) {
+        const statDiv = document.getElementById(statId);
+        if (statDiv) {
+            statDiv.classList.add('pulse');
+            setTimeout(() => statDiv.classList.remove('pulse'), 200);
+        }
+        const valueSpan = document.querySelector(`#${statId} .stat-value`);
+        if (valueSpan) {
+            valueSpan.classList.add(isPositive ? 'plus' : 'minus');
+            setTimeout(() => valueSpan.classList.remove(isPositive ? 'plus' : 'minus'), 200);
+        }
+        // 飘字效果
+        const floatDiv = document.createElement('div');
+        floatDiv.className = 'float-number';
+        floatDiv.style.left = (window.innerWidth / 2) + 'px';
+        floatDiv.style.top = (window.innerHeight / 2 - 50) + 'px';
+        floatDiv.style.color = isPositive ? '#aaffaa' : '#ffaa88';
+        floatDiv.innerHTML = (isPositive ? '+' : '') + delta;
+        document.body.appendChild(floatDiv);
+        setTimeout(() => floatDiv.remove(), 800);
+    }
+    function shakeScreen() {
+        const container = document.getElementById('gameContainer');
+        container.classList.add('shake');
+        setTimeout(() => container.classList.remove('shake'), 300);
+    }
+    function lightningFlash() {
+        const lightning = document.getElementById('lightning');
+        lightning.classList.add('flash');
+        setTimeout(() => lightning.classList.remove('flash'), 150);
+    }
+    
     // 境界列表
     const REALMS = ["炼气期", "筑基期", "结丹期", "元婴期", "化神期", "渡劫期", "大乘期", "真仙境", "金仙境"];
-    // 每境基础回合限制（高难度）
-    const TURN_LIMITS = [7, 8, 9, 10, 11, 12, 13, 14, 18];
-    // 每境渡劫死亡率
-    const DEATH_RATES = [0.18, 0.26, 0.35, 0.45, 0.55, 0.65, 0.75, 0.85, 0.0];
+    const TURN_LIMITS = [10, 9, 10, 11, 12, 13, 14, 15, 18];
+    const DEATH_RATES = [0.12, 0.22, 0.30, 0.40, 0.50, 0.60, 0.70, 0.80, 0.0];
 
     let game = {
         realmIdx: 0,
         cultivation: 0,
         fireTemp: 50,
-        herbs: 3,
-        ores: 3,
-        blood: 2,
+        herbs: 5,
+        ores: 5,
+        blood: 3,
         turnsLeft: TURN_LIMITS[0],
         gameOver: false,
         gameWin: false,
@@ -445,9 +634,10 @@
 
     function addLog(msg, isError) {
         const p = document.createElement("div");
+        p.className = "log-entry";
         p.innerHTML = (isError ? "⚠️ " : "✨ ") + msg;
         logArea.appendChild(p);
-        logArea.scrollTop = logArea.scrollHeight;
+        p.scrollIntoView({ behavior: "smooth", block: "nearest" });
         while (logArea.children.length > 22) logArea.removeChild(logArea.firstChild);
     }
 
@@ -462,6 +652,13 @@
 
     function updateUI() {
         clampValues();
+        let oldCult = parseInt(cultivationVal.innerText) || 0;
+        let cultDelta = game.cultivation - oldCult;
+        if (cultDelta !== 0) {
+            animateStatChange('cultStat', Math.abs(cultDelta), cultDelta > 0);
+            if (cultDelta > 0) playBeep('success');
+            else if (cultDelta < -5) playBeep('fail');
+        }
         cultivationVal.innerText = game.cultivation;
         fireVal.innerText = game.fireTemp;
         turnLeftSpan.innerText = game.turnsLeft;
@@ -476,17 +673,11 @@
         else currentRealmSpan.innerHTML = `⚡ ${REALMS[game.realmIdx]} ⚡`;
         
         fireFill.style.width = `${game.fireTemp}%`;
-        if (game.fireTemp < 25) {
-            fireStatusSpan.innerHTML = "❄️ 冰寒刺骨";
-        } else if (game.fireTemp < 45) {
-            fireStatusSpan.innerHTML = "🌡️ 微温偏冷";
-        } else if (game.fireTemp <= 65) {
-            fireStatusSpan.innerHTML = "🔥 赤焰真火";
-        } else if (game.fireTemp <= 85) {
-            fireStatusSpan.innerHTML = "🌋 烈焰翻腾";
-        } else {
-            fireStatusSpan.innerHTML = "💀 焚天灭地";
-        }
+        if (game.fireTemp < 25) fireStatusSpan.innerHTML = "❄️ 冰寒刺骨";
+        else if (game.fireTemp < 45) fireStatusSpan.innerHTML = "🌡️ 微温偏冷";
+        else if (game.fireTemp <= 65) fireStatusSpan.innerHTML = "🔥 赤焰真火";
+        else if (game.fireTemp <= 85) fireStatusSpan.innerHTML = "🌋 烈焰翻腾";
+        else fireStatusSpan.innerHTML = "💀 焚天灭地";
         
         herbCountSpan.innerText = game.herbs;
         oreCountSpan.innerText = game.ores;
@@ -501,19 +692,6 @@
         adjustFireUp.disabled = disabled;
         adjustFireDown.disabled = disabled;
         breakthroughBtn.disabled = disabled;
-        if (disabled) {
-            exploreBtn.classList.add("disabled-btn");
-            alchemyBtn.classList.add("disabled-btn");
-            adjustFireUp.classList.add("disabled-btn");
-            adjustFireDown.classList.add("disabled-btn");
-            breakthroughBtn.classList.add("disabled-btn");
-        } else {
-            exploreBtn.classList.remove("disabled-btn");
-            alchemyBtn.classList.remove("disabled-btn");
-            adjustFireUp.classList.remove("disabled-btn");
-            adjustFireDown.classList.remove("disabled-btn");
-            breakthroughBtn.classList.remove("disabled-btn");
-        }
     }
 
     function consumeTurn() {
@@ -534,19 +712,23 @@
         game.gameOver = true;
         game.deathCause = cause;
         addLog(cause, true);
+        playBeep('death');
+        shakeScreen();
         updateUI();
         showResultModal(false);
     }
 
     function winGame() {
         game.gameWin = true;
+        playBeep('breakthrough');
+        lightningFlash();
         updateUI();
         showResultModal(true);
     }
 
     function showResultModal(isWin) {
         modalTitle.innerHTML = isWin ? "🏆 飞升成圣 🏆" : "💀 身死道消 💀";
-        let statsHtml = `
+        modalStats.innerHTML = `
             <p>🏁 最终境界：${isWin ? "金仙境·圆满" : REALMS[game.realmIdx]}</p>
             <p>📊 总行动次数：${game.totalTurnsUsed}</p>
             <p>💑 道侣相伴：${game.hasCompanion ? "是" : "否"}</p>
@@ -554,42 +736,43 @@
             <p>🔥 最终炉火：${game.fireTemp}°C</p>
             <p>📜 结局：${isWin ? "功德圆满，超脱三界" : game.deathCause.substring(0, 50)}</p>
         `;
-        modalStats.innerHTML = statsHtml;
         modal.classList.remove("hidden");
     }
 
     function getAlchemySuccessRate() {
-        let base = 55;
+        let base = 60;
         let temp = game.fireTemp;
-        if (temp < 20) base = 8;
-        else if (temp < 30) base = 18;
-        else if (temp < 40) base = 32;
-        else if (temp < 45) base = 48;
-        else if (temp <= 65) base = 75;
-        else if (temp <= 75) base = 45;
-        else if (temp <= 85) base = 25;
-        else base = 10;
+        if (temp < 20) base = 12;
+        else if (temp < 30) base = 22;
+        else if (temp < 40) base = 38;
+        else if (temp < 45) base = 52;
+        else if (temp <= 65) base = 78;
+        else if (temp <= 75) base = 50;
+        else if (temp <= 85) base = 30;
+        else base = 15;
         if (game.hasCompanion) base += 8;
-        return Math.min(90, base);
+        return Math.min(92, base);
     }
 
     function getAlchemyGain() {
-        let base = 12 + Math.floor(Math.random() * 15);
+        let base = 14 + Math.floor(Math.random() * 18);
         let temp = game.fireTemp;
         let multiplier = 1.0;
         if (temp >= 45 && temp <= 65) multiplier = 1.0;
-        else if (temp >= 35 && temp < 45) multiplier = 0.65;
-        else if (temp > 65 && temp <= 75) multiplier = 0.6;
-        else if (temp > 75 && temp <= 85) multiplier = 0.45;
-        else multiplier = 0.25;
+        else if (temp >= 35 && temp < 45) multiplier = 0.7;
+        else if (temp > 65 && temp <= 75) multiplier = 0.65;
+        else if (temp > 75 && temp <= 85) multiplier = 0.5;
+        else multiplier = 0.35;
         if (game.hasImmortal) multiplier += 0.25;
-        return Math.max(3, Math.floor(base * multiplier));
+        return Math.max(4, Math.floor(base * multiplier));
     }
 
     function alchemy() {
         if (game.gameOver || game.gameWin) return;
+        animateButton(alchemyBtn);
         if (game.herbs < 2 || game.ores < 1) {
             addLog("材料不足！需要2灵草+1矿石", true);
+            playBeep('fail');
             return;
         }
         game.herbs -= 2;
@@ -601,15 +784,17 @@
             let gain = getAlchemyGain();
             game.cultivation = Math.min(100, game.cultivation + gain);
             addLog(`炼丹成功！修为+${gain}`, false);
+            playBeep('success');
             let tempChange = Math.floor(Math.random() * 5) - 2;
             game.fireTemp = Math.min(100, Math.max(0, game.fireTemp + tempChange));
         } else {
-            let loss = 10 + Math.floor(Math.random() * 15);
+            let loss = 6 + Math.floor(Math.random() * 12);
             game.cultivation = Math.max(0, game.cultivation - loss);
             addLog(`炼丹失败！修为-${loss}`, true);
-            let fluct = 8 + Math.floor(Math.random() * 12);
+            playBeep('fail');
+            let fluct = 5 + Math.floor(Math.random() * 10);
             game.fireTemp = Math.min(100, Math.max(0, game.fireTemp + (Math.random()>0.5 ? fluct : -fluct)));
-            if (game.fireTemp > 90 && Math.random() < 0.3) {
+            if (game.fireTemp > 92 && Math.random() < 0.25) {
                 die("丹炉爆炸！你被烈焰吞噬，形神俱灭...");
                 return;
             }
@@ -621,19 +806,21 @@
 
     function explore() {
         if (game.gameOver || game.gameWin) return;
+        animateButton(exploreBtn);
         let r = Math.random();
         
-        if (r < 0.2 && !game.hasCompanion) {
+        if (r < 0.18 && !game.hasCompanion) {
             game.hasCompanion = true;
             game.companionBonus = 8;
             addLog("💕 邂逅修仙道侣！你们结为伴侣，炼丹成功率+8%", false);
             game.turnsLeft += 2;
             addLog("道侣赠予灵丹，额外获得2回合！");
+            playBeep('success');
             consumeTurn();
             return;
         }
         
-        if (r < 0.35 && !game.hasImmortal) {
+        if (r < 0.32 && !game.hasImmortal) {
             game.hasImmortal = true;
             game.immortalBonus = 15;
             addLog("✨ 遇仙缘！仙人指点，探索收益+30%", false);
@@ -641,116 +828,30 @@
             addLog("修为+12");
             game.turnsLeft += 2;
             addLog("仙人赐福，增加2回合！");
+            playBeep('breakthrough');
             consumeTurn();
             return;
         }
         
-        if (r < 0.55) {
-            let herbsGain = 1 + Math.floor(Math.random() * 5);
-            let oresGain = 1 + Math.floor(Math.random() * 4);
+        if (r < 0.65) {
+            let herbsGain = 2 + Math.floor(Math.random() * 7);
+            let oresGain = 1 + Math.floor(Math.random() * 5);
             game.herbs += herbsGain;
             game.ores += oresGain;
             addLog(`探索到灵脉！灵草+${herbsGain}，矿石+${oresGain}`);
+            playBeep('success');
         } 
-        else if (r < 0.75) {
-            let gainCult = 5 + Math.floor(Math.random() * 10);
+        else if (r < 0.82) {
+            let gainCult = 6 + Math.floor(Math.random() * 12);
             game.cultivation = Math.min(100, game.cultivation + gainCult);
             addLog(`顿悟天道！修为+${gainCult}`);
+            playBeep('success');
         }
-        else if (r < 0.9) {
-            let gainFire = 5 + Math.floor(Math.random() * 8);
+        else if (r < 0.93) {
+            let gainFire = 4 + Math.floor(Math.random() * 8);
             game.fireTemp = Math.min(100, game.fireTemp + gainFire);
             addLog(`发现地火！炉火+${gainFire}`);
         }
         else {
-            addLog("探索遭遇妖兽！损失惨重", true);
-            game.herbs = Math.max(0, game.herbs - 3);
-            game.ores = Math.max(0, game.ores - 2);
-            game.cultivation = Math.max(0, game.cultivation - 8);
-            addLog("修为-8，材料损失", true);
-            if (Math.random() < 0.2 && game.cultivation < 20) {
-                die("被妖兽重伤，道基碎裂...");
-                return;
-            }
-        }
-        clampValues();
-        updateUI();
-        consumeTurn();
-    }
-
-    function adjustFire(up) {
-        if (game.gameOver || game.gameWin) return;
-        let delta = up ? 10 : -10;
-        game.fireTemp = Math.min(100, Math.max(0, game.fireTemp + delta));
-        addLog(up ? "添加灵炭，炉火+10" : "投入寒石，炉火-10");
-        updateUI();
-        consumeTurn();
-    }
-
-    function breakthrough() {
-        if (game.gameOver || game.gameWin) return;
-        if (game.cultivation < 100) {
-            addLog(`修为不足${game.cultivation}/100，无法渡劫`, true);
-            return;
-        }
-        if (game.realmIdx >= REALMS.length - 1) {
-            winGame();
-            return;
-        }
-        let deathRate = DEATH_RATES[game.realmIdx];
-        if (game.hasCompanion) deathRate = Math.max(0, deathRate - 0.05);
-        let roll = Math.random();
-        if (roll < deathRate) {
-            die(`渡劫失败！${REALMS[game.realmIdx]}突破至${REALMS[game.realmIdx+1]}时天雷噬体，神魂俱灭...`);
-            return;
-        }
-        game.realmIdx++;
-        game.cultivation = 0;
-        game.fireTemp = 55;
-        game.turnsLeft = TURN_LIMITS[game.realmIdx];
-        if (game.hasCompanion) game.turnsLeft += 1;
-        if (game.hasImmortal) game.turnsLeft += 2;
-        addLog(`🎉 渡劫成功！晋升${REALMS[game.realmIdx]}！炉火重置，获得${game.turnsLeft}回合`);
-        updateUI();
-        consumeTurn();
-    }
-
-    function resetGame() {
-        game = {
-            realmIdx: 0,
-            cultivation: 0,
-            fireTemp: 50,
-            herbs: 3,
-            ores: 3,
-            blood: 2,
-            turnsLeft: TURN_LIMITS[0],
-            gameOver: false,
-            gameWin: false,
-            deathCause: "",
-            hasCompanion: false,
-            companionBonus: 0,
-            hasImmortal: false,
-            immortalBonus: 0,
-            totalTurnsUsed: 0
-        };
-        logArea.innerHTML = "> 轮回重生，天道残酷，愿此生成仙！<br>> 炉火至关重要，寻找道侣/仙缘是唯一生机。<br>> 每境回合极紧，务必精打细算。";
-        updateUI();
-        addLog("灵台清明，道心重燃");
-        modal.classList.add("hidden");
-    }
-
-    exploreBtn.addEventListener("click", explore);
-    alchemyBtn.addEventListener("click", alchemy);
-    adjustFireUp.addEventListener("click", () => adjustFire(true));
-    adjustFireDown.addEventListener("click", () => adjustFire(false));
-    breakthroughBtn.addEventListener("click", breakthrough);
-    resetBtn.addEventListener("click", resetGame);
-    closeModalBtn.addEventListener("click", () => {
-        modal.classList.add("hidden");
-        resetGame();
-    });
-
-    resetGame();
-</script>
-</body>
-</html>
+            addLog("探索遭遇妖兽！损失部分材料", true);
+           
